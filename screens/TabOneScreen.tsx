@@ -1,36 +1,47 @@
-import React, { useState, useEffect } from "react";
-import { Pressable, StyleSheet, TextInput } from "react-native";
+import React, { useState } from "react";
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
 
 import { Text, View } from "../components/Themed";
 import { RootTabScreenProps } from "../types";
 
-import { getCurrentWeather } from "../global/api/weather";
-import Button from "../components/button/button";
+import { useGetCurrentWeatherQuery } from "../global/api/weatherSlice";
 
 export const TabOneScreen = ({ navigation }: RootTabScreenProps<"TabOne">) => {
   const [response, setResponse] = useState<any>();
   const [temp, setTemp] = useState<number>(0);
   const [zipCode, onChangeText] = useState<string>("");
 
-  useEffect(() => {
-    (async () => {
-      const res = await getCurrentWeather(`68007`);
-      setResponse(res);
-      if (res) {
-        setTemp(res.current.temp_f);
-      }
-    })();
-  }, []);
+  const {
+    data: currentWeather,
+    isLoading,
+    isSuccess,
+  } = useGetCurrentWeatherQuery(68007);
 
   const onPress = async (zipCode: string) => {
-    const test = await getCurrentWeather(zipCode);
-    setTemp(test.current.temp_f);
+    if (isSuccess) {
+      setTemp(currentWeather.current.temp_f);
+    }
     onChangeText("");
   };
 
-  const handlePress = (value: string) => {
-    getCurrentWeather(value);
-  };
+  let content;
+
+  if (isLoading) {
+    content = <ActivityIndicator />;
+  } else if (isSuccess) {
+    content = (
+      <Text style={styles.title}>
+        The current temp in your area is {currentWeather.current.temp_f},
+        therefore - it is okay.
+      </Text>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -42,9 +53,7 @@ export const TabOneScreen = ({ navigation }: RootTabScreenProps<"TabOne">) => {
       <Pressable onPress={() => onPress(zipCode)}>
         <Text>Submit</Text>
       </Pressable>
-      <Text style={styles.title}>
-        The current temp in your area is {temp}, therefore - it is okay.
-      </Text>
+      {content}
     </View>
   );
 };
