@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { CurrentWeatherRoot } from "../interfaces/getCurrentWeather";
 
 const API_KEYS = {
   WEATHER_API_KEY_VALUE: "368334870e46486e85613919222506",
@@ -9,15 +10,14 @@ const URLS = {
   GET_CURRENT_WEATHER: `current.json?key=${API_KEYS.WEATHER_API_KEY_VALUE}`,
 };
 
-export const weatherApiSlice = createApi({
+export const weatherApi = createApi({
   reducerPath: "api", //this is default,
   baseQuery: fetchBaseQuery({ baseUrl: URLS.BASE_URL }),
   endpoints: (builder) => ({
-    getCurrentWeather: builder.query({
-      query: (zipCode: string | number) =>
-        `${URLS.GET_CURRENT_WEATHER}&q=${zipCode}`,
+    getCurrentWeather: builder.query<CurrentWeatherRoot, string>({
+      query: (zipCode) => `${URLS.GET_CURRENT_WEATHER}&q=${zipCode}`,
     }),
   }),
 });
 
-export const { useGetCurrentWeatherQuery }: any = weatherApiSlice;
+export const { useGetCurrentWeatherQuery } = weatherApi;

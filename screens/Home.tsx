@@ -1,32 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { Pressable, StyleSheet, TextInput } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  Dimensions,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Text, View } from "../components/Themed";
 
+import { useGetCurrentWeatherQuery } from "../global/api/weatherApi";
+
+const deviceWidth = Dimensions.get("window").width;
+
 export const Home = () => {
+  const [zipCode, setZipCode] = useState<string>(`68007`);
+
+  const { data, isSuccess, isLoading, error, isError } =
+    useGetCurrentWeatherQuery(zipCode);
+
+  if (isLoading) return <ActivityIndicator size="large" />;
+
+  if (isError || !data) {
+    return <View>Something went wrong</View>;
+  }
+
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder="Enter your zip code"
-        onChangeText={() => ({})}
-        value={`123`}
-        keyboardType="numeric"
-      />
-      <Pressable onPress={() => ({})}>
-        <Text>Submit</Text>
-      </Pressable>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <View style={styles.cardContainer}>
+          <Text style={styles.heading}>
+            {data.location.name}, {data.location.region}
+          </Text>
+          <Text style={styles.temp}>Currently: {data.current.temp_f}</Text>
+          <Text style={styles.temp}>
+            Wind: {data.current.wind_mph}/mph {data.current.wind_dir}
+          </Text>
+          <Text style={styles.temp}>
+            Precipitation: {data.current.precip_in}
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  container: {},
+  scrollViewContainer: {
+    justifyContent: "flex-start",
+    width: deviceWidth,
+    backgroundColor: "white",
   },
-  title: {
-    fontSize: 12,
+  cardContainer: {
+    justifyContent: "flex-start",
+    marginTop: 110,
+    marginLeft: 20,
+    marginRight: 20,
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: "aliceblue",
+  },
+  heading: {
+    fontSize: 20,
     fontWeight: "bold",
+    color: "black",
+  },
+  temp: {
+    fontSize: 16,
+    paddingTop: 10,
   },
 });
