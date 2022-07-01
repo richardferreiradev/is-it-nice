@@ -23,7 +23,7 @@ export const Navigation = ({
           name="Home"
           component={Home}
           options={{
-            headerLargeTitle: true,
+            headerLargeTitle: false,
             headerStyle: { backgroundColor: "white" },
             headerShadowVisible: false,
           }}
