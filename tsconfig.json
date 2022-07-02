@@ -1,6 +1,17 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "strict": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "lib": ["es6"],
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "noEmit": true,
+    "useUnknownInCatchVariables": false,
+    "baseUrl": ".",
+    "resolveJsonModule": true
+  },
+  "include": ["global", "components", "navigation", ".prettierrc.js"]
 }

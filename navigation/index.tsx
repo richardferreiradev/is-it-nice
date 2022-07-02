@@ -2,10 +2,10 @@ import {
   DarkTheme,
   DefaultTheme,
   NavigationContainer,
-} from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ColorSchemeName, useColorScheme } from "react-native";
-import { Home } from "../screens/Home";
+} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ColorSchemeName, useColorScheme } from 'react-native';
+import { Home } from '../screens/Home/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,16 +16,13 @@ export const Navigation = ({
 }) => {
   return (
     <NavigationContainer
-      theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-    >
+      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={Home}
           options={{
-            headerLargeTitle: false,
-            headerStyle: { backgroundColor: "white" },
-            headerShadowVisible: false,
+            headerShown: false,
           }}
         />
       </Stack.Navigator>
