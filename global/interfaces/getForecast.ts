@@ -1,4 +1,4 @@
-interface Location {
+export interface Location {
   name: string;
   region: string;
   country: string;
@@ -9,13 +9,13 @@ interface Location {
   localtime: string;
 }
 
-interface Condition {
+export interface Condition {
   text: string;
   icon: string;
   code: number;
 }
 
-interface Current {
+export interface Current {
   last_updated_epoch: number;
   last_updated: string;
   temp_c: number;
@@ -41,7 +41,7 @@ interface Current {
   gust_kph: number;
 }
 
-interface Day {
+export interface Day {
   maxtemp_c: number;
   maxtemp_f: number;
   mintemp_c: number;
@@ -63,7 +63,7 @@ interface Day {
   uv: number;
 }
 
-interface Astro {
+export interface Astro {
   sunrise: string;
   sunset: string;
   moonrise: string;
@@ -72,7 +72,7 @@ interface Astro {
   moon_illumination: string;
 }
 
-interface Hour {
+export interface Hour {
   time_epoch: number;
   time: string;
   temp_c: number;
@@ -108,7 +108,7 @@ interface Hour {
   uv: number;
 }
 
-interface Forecastday {
+export interface Forecastday {
   date: string;
   date_epoch: number;
   day: Day;
@@ -116,7 +116,7 @@ interface Forecastday {
   hour: Hour[];
 }
 
-interface Forecast {
+export interface Forecast {
   forecastday: Forecastday[];
 }
 
