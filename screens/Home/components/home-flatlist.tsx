@@ -1,5 +1,5 @@
 import { Current, Forecastday, Location } from 'global/interfaces/getForecast';
-import React, { FC, useState, useMemo } from 'react';
+import React, { FC, useState, useMemo, useCallback } from 'react';
 import {
   FlatList,
   Text,
@@ -10,11 +10,9 @@ import {
 } from 'react-native';
 
 import { Autocomplete } from 'react-native-autocomplete-input';
+import { WeatherCard } from './weather-card';
 
-import {
-  useGetForecastQuery,
-  weatherApi,
-} from '../../../global/api/weatherApi';
+import { useGetForecastQuery } from '../../../global/api/weatherApi';
 
 export const HomeList = () => {
   const [params, setParams] = useState('68007');
@@ -22,43 +20,26 @@ export const HomeList = () => {
   const { data, isSuccess, isLoading, isError, error } =
     useGetForecastQuery(params);
 
-  let response;
-  let forecast: Forecastday[] | [];
-  let current: Current;
-  let location: Location;
-
-  if (isLoading) {
-    response = <ActivityIndicator size="large" />;
-  } else if (isSuccess) {
-    forecast = data.forecast.forecastday;
-    current = data.current;
-    location = data.location;
-    // console.log(current, 'current');
-    // console.log(location, 'location');
-  } else if (isError) {
-    response = (
-      <View>
-        <Text>There was an error displaying data</Text>
-      </View>
-    );
-  }
+  const forecast = data?.forecast?.forecastday;
+  const current = data?.current;
+  const location = data?.location;
 
   const ListHeaderComponent = useMemo(() => {
     return (
       <View style={styles.headerContainer}>
-        <Text style={styles.city}>{location.name}</Text>
-        <Text style={styles.currentTemp}>{current.temp_f}</Text>
+        <Text style={styles.city}>{location?.name}</Text>
+        <Text style={styles.currentTemp}>{current?.temp_f}</Text>
         <View style={styles.currentForecastContainer}>
           <Text style={styles.currentForecast}>
-            H: {forecast[0].day.maxtemp_f}
+            H: {forecast?.[0].day.maxtemp_f}
           </Text>
           <Text style={styles.currentForecast}>
-            L: {forecast[0].day.mintemp_f}
+            L: {forecast?.[0].day.mintemp_f}
           </Text>
         </View>
       </View>
     );
-  }, []);
+  }, [forecast]);
 
   const searchData = ['bennington, test', 'test2'];
 
@@ -68,21 +49,13 @@ export const HomeList = () => {
 
   return (
     <View>
-      {data && (
-        <FlatList
-          data={data.forecast}
-          renderItem={({ item }) => (
-            <View style={styles.cardContainer}>
-              <Text>Max: {item.day.maxtemp_f}</Text>
-              <Text>Wind: {item.day.maxwind_kph}/mph</Text>
-            </View>
-          )}
-          keyExtractor={item => item.date}
-          ListHeaderComponent={ListHeaderComponent}
-          stickyHeaderIndices={[0]}
-        />
-      )}
-      );
+      <FlatList
+        data={forecast}
+        renderItem={({ item }) => <WeatherCard hourlyTemp={item.hour} />}
+        keyExtractor={item => item.date}
+        ListHeaderComponent={ListHeaderComponent}
+        stickyHeaderIndices={[0]}
+      />
     </View>
   );
 };
@@ -96,24 +69,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3abcd',
   },
   city: {
-    fontSize: 28,
+    fontSize: 30,
     textAlign: 'center',
   },
+  headerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    marginTop: 30,
+    marginBottom: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginHorizontal: 10,
+    paddingVertical: 10,
+    zIndex: -1,
+  },
   currentTemp: {
-    fontSize: 36,
+    fontSize: 42,
     fontWeight: 'bold',
   },
   currentForecastContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  currentForecast: { paddingHorizontal: 5 },
-  headerContainer: {
-    height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
+  currentForecast: { paddingHorizontal: 20 },
   input: {
     backgroundColor: 'white',
     borderRadius: 5,
